@@ -63,15 +63,32 @@ class time_serias_chart:
 gen1 = generator()
 gen1.setVariance(-0.5,0.5)
 gen1.increaseLinear(1000)
+gen1.decreaseLinear(1000)
+gen1.staticSequense(1000)
+gen1.increaseLinear(1000)
+gen1.decreaseLinear(1000)
+
 
 gen2 = generator()
 gen2.setVariance(-0.5,0.5)
+gen2.staticSequense(1000)
+gen2.increaseLinear(1000)
+gen2.decreaseParabol(1000)
+gen2.staticSequense(1000)
 gen2.increaseLinear(1000)
 
 gen3 = generator()
-gen3.setVariance(-0.5,0.5)
-gen3.increaseLinear(1000)
-
+gen3.staticSequense(1000)
+gen3.logicTrue()
+gen3.staticSequense(1000)
+gen3.staticSequense(1000)
+gen3.logicFalse()
+gen3.staticSequense(1000)
+gen3.logicTrue()
+gen3.staticSequense(500)
+gen3.logicFalse()
+gen3.staticSequense(500)
+gen3.logicTrue()
 
 draw = time_serias_chart(gen1.getLastIndex(), step=400)
 

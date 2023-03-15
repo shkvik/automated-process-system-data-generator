@@ -3,6 +3,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 import math
+from multipledispatch import dispatch
 
 class generator:
     def __init__(self) -> None:
@@ -18,6 +19,7 @@ class generator:
     def setVariance(self, varianceMax: float = 0.0, varianceMin: float = 0.0):
         self.varianceMax = varianceMax
         self.varianceMin = varianceMin
+        return self
 
     def getLastIndex(self) -> int:
         return len(self.sequense) - 1
@@ -50,7 +52,19 @@ class generator:
                 rnd.uniform(self.varianceMin, self.varianceMax))
         return self
 
+    @dispatch(int)
     def increaseParabol(self, time: int):
+        step = self.maxHeight/time**2
+        xCurrent: int = 0
+        while(self.getLastValue() < self.maxHeight):
+            xCurrent += 1
+            self.sequense.append(xCurrent**2 * step +
+                rnd.uniform(self.varianceMin, self.varianceMax))
+        return self
+    
+    @dispatch(int, int)
+    def increaseParabol(self, time: int, some_new):
+        unuseles = some_new 
         step = self.maxHeight/time**2
         xCurrent: int = 0
         while(self.getLastValue() < self.maxHeight):
@@ -83,7 +97,18 @@ class generator:
         self.sequense.append(self.maxHeight)
         return self
 
-def DrawSignature(start: int, stop: int, letter: str):
-    plt.plot([start,start], [-10, 110], linestyle='dashed', c='red')
+def DrawSignature(start: int, stop: int = None, letter: str = None, color: str = 'red'):
+    plt.plot([start,start], [-10, 110], linestyle='dashed', c=color)
     plt.text(start + 10, 105, letter, fontsize=10)
-    plt.plot([stop,stop], [-10, 110], linestyle='dashed', c='red')
+    plt.plot([stop,stop], [-10, 110], linestyle='dashed', c=color)
+
+
+gen1 = generator()
+
+gen1.increaseParabol(100)
+gen1.decreaseParabol(100)
+gen1.increaseParabol(100, 100)
+
+
+plt.plot(gen1.sequense)
+plt.show()
