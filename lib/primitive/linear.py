@@ -7,12 +7,7 @@ class linear:
     def __init__(self, parameters: parameters) -> None:
         self.parameters = parameters
 
-    def setVariance(self, varianceMax: float = 0.0, varianceMin: float = 0.0):
-        self.parameters.varianceMax = varianceMax
-        self.parameters.varianceMin = varianceMin
-        return self
-    
-    def increaseLinear(self, time: int):
+    def increase(self, time: int):
         step = (self.parameters.maxHeight - self.parameters.getLastValue()) /time 
 
         for index in range(0, time):
@@ -21,7 +16,7 @@ class linear:
 
         return self
     
-    def decreaseLinear(self, time: int):
+    def decrease(self, time: int):
         step = (self.parameters.getLastValue()) /time 
 
         for index in range(0, time):

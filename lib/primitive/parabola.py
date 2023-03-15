@@ -8,11 +8,7 @@ class parabola:
     def __init__(self, parameters: parameters) -> None:
         self.parameters = parameters
         
-    # @dispatch(int, float)
     def increase(self, time: int, maxHeight: float = None):
-        '''
-        Эта функция демонстрирует использование docstring в Python.
-        '''
         if maxHeight is None:
             maxHeight = self.parameters.maxHeight 
 
