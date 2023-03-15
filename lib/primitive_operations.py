@@ -4,6 +4,8 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import math
 from multipledispatch import dispatch
+from primitive.parameters import parameters
+from primitive.parabola import parabola
 
 class generator:
     def __init__(self) -> None:
@@ -13,9 +15,19 @@ class generator:
 
         self.maxHeight: float = 100
         self.minHeight: float = 0
-        
+
         self.sequense:  list[float] = [1.0]
-    
+
+        self.parameters = parameters(
+            self.varianceMax,
+            self.varianceMin,
+            self.maxHeight,
+            self.minHeight,
+            self.sequense
+        )
+
+        self.parabola = parabola(self.parameters)
+
     def setVariance(self, varianceMax: float = 0.0, varianceMin: float = 0.0):
         self.varianceMax = varianceMax
         self.varianceMin = varianceMin
@@ -45,12 +57,22 @@ class generator:
 
     def decreaseParabol(self, time: int):
         step = self.maxHeight/time**2
-        xCurrent: int = 0
+
+        xCurrent = self.getLastValue()
+        yMaxHeight = self.getLastValue()
+
         while(self.getLastValue() > self.minHeight):
             xCurrent += 1
-            self.sequense.append(xCurrent**2 * -step + self.maxHeight +
-                rnd.uniform(self.varianceMin, self.varianceMax))
+            watch = xCurrent**2 * -step + yMaxHeight
+
+            self.sequense.append(watch + rnd.uniform(self.varianceMin, self.varianceMax))
+                
+            # self.sequense.append(xCurrent**2 * -step + self.maxHeight +
+            #     rnd.uniform(self.varianceMin, self.varianceMax))
+            
+
         return self
+    
 
     @dispatch(int)
     def increaseParabol(self, time: int):
@@ -63,15 +85,19 @@ class generator:
         return self
     
     @dispatch(int, int)
-    def increaseParabol(self, time: int, some_new):
-        unuseles = some_new 
-        step = self.maxHeight/time**2
-        xCurrent: int = 0
-        while(self.getLastValue() < self.maxHeight):
+    def increaseParabol(self, time: int, maxHeight: float):
+        if maxHeight > self.maxHeight:
+            raise 'maxHeight cant be more than 100'
+
+        step = maxHeight/time**2
+        xCurrent = self.getLastValue()
+        while(self.getLastValue() < maxHeight):
             xCurrent += 1
             self.sequense.append(xCurrent**2 * step +
                 rnd.uniform(self.varianceMin, self.varianceMax))
         return self
+
+
 
     def decreaseLinear(self, time: int):
         step = self.maxHeight/time
@@ -105,9 +131,11 @@ def DrawSignature(start: int, stop: int = None, letter: str = None, color: str =
 
 gen1 = generator()
 
-gen1.increaseParabol(100)
-gen1.decreaseParabol(100)
-gen1.increaseParabol(100, 100)
+gen1.increaseParabol(1000, 50)
+gen1.decreaseParabol(1000)
+gen1.increaseParabol(1000, 100)
+gen1.decreaseParabol(1000)
+gen1.parabola.increase(1000)
 
 
 plt.plot(gen1.sequense)
