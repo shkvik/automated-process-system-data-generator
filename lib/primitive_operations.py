@@ -131,11 +131,10 @@ def DrawSignature(start: int, stop: int = None, letter: str = None, color: str =
 
 gen1 = generator()
 
-gen1.increaseParabol(1000, 50)
-gen1.decreaseParabol(1000)
-gen1.increaseParabol(1000, 100)
-gen1.decreaseParabol(1000)
-gen1.parabola.increase(1000)
+gen1.parabola.increase(100, 50)
+gen1.parabola.increase(100, 90)
+# gen1.parabola.decrease(100)
+
 
 
 plt.plot(gen1.sequense)
