@@ -4,6 +4,7 @@ from multipledispatch import dispatch
 from primitive.parameters import parameters
 from primitive.parabola import parabola
 from primitive.linear import linear
+from primitive.static import static
 
 class unit:
     def __init__(self) -> None:
@@ -18,6 +19,7 @@ class unit:
 
         self.parabola = parabola(self.parameters)
         self.linear = linear(self.parameters)
+        self.static = static(self.parameters)
 
     def setVariance(self, varianceMax: float = 0.0, varianceMin: float = 0.0):
         self.parameters.varianceMax = varianceMax

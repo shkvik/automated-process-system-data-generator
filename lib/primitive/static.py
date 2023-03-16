@@ -16,13 +16,17 @@ class static:
                 rnd.uniform(self.parameters.varianceMin, self.parameters.varianceMax))
         return self
 
-    def true(self, time: int):
+    def true(self, time: int = None):
         self.parameters.sequense.append(self.parameters.maxHeight)
-        self.sequence(time)
+
+        if time is not None:
+            self.sequence(time)
         return self
 
-    def false(self, time: int):
+    def false(self, time: int = None):
         self.parameters.sequense.append(self.parameters.minHeight)
-        self.sequence(time)
+
+        if time is not None:
+            self.sequence(time)
         return self
     
