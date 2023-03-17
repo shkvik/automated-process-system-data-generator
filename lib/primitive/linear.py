@@ -9,11 +9,11 @@ class linear:
 
     def increase(self, time: int, maxHeight: float = None):
         
-        limit: int = self.parameters.maxHeight - self.parameters.getLastValue()
+        limit: float = self.parameters.maxHeight - self.parameters.getLastValue()
 
         if maxHeight is not None:
-            assert(maxHeight > self.parameters.maxHeight 
-                or maxHeight < self.parameters.minHeight)
+            assert(maxHeight < self.parameters.maxHeight 
+                or maxHeight > self.parameters.minHeight)
             limit = limit - (self.parameters.maxHeight - maxHeight)
 
         step = limit/time
@@ -24,8 +24,18 @@ class linear:
 
         return self
 
-    def decrease(self, time: int):
-        step = (self.parameters.getLastValue()) /time 
+    def decrease(self, time: int, maxHeight: float = None):
+
+        limit: float = self.parameters.getLastValue()
+
+        if maxHeight is not None:
+            assert(maxHeight < self.parameters.maxHeight 
+                or maxHeight > self.parameters.minHeight)
+            
+            show = self.parameters.maxHeight - maxHeight
+            limit = abs(limit - (self.parameters.maxHeight - maxHeight))
+        
+        step = limit/time 
 
         for index in range(0, time):
             self.parameters.sequense.append(self.parameters.getLastValue() - step -
