@@ -44,9 +44,8 @@ class builder:
 
         for i in range(0, 4):
             
-            if i % 3 == 0 and i != 0:
+            if i % 3 == 0:
                 flagBinEvent = not flagBinEvent
-                self.dynLinearEvent(accumTime, flagBinEvent)
 
             self.variance   =  rnd.uniform(0.0, 3.0)
 
@@ -64,7 +63,6 @@ class builder:
                 self.time.pack['static3']
             )
 
-            self.dynLinearEvent(self.time.getSum())
             self.dynBinEvent(self.time.getSum(), flagBinEvent)
             accumTime += self.time.getSum()
 
@@ -73,7 +71,7 @@ class builder:
         self.algLinearEvent.primitive.static.sequence(time)
 
         if activate:
-            self.algLinearEvent.primitive.linear.increase(time)
+            self.algLinearEvent.primitive.linear.increase_pidoras(time)
         else:
             self.algLinearEvent.primitive.linear.decrease(time)
 
