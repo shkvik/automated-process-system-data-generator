@@ -4,6 +4,7 @@ sys.path.insert(0, 'lib')
 import numpy as np
 
 from processes.process import algorithm
+from processes.utils import constrained_sum_sample_pos
 import matplotlib.pyplot as plt
 import random as rnd
 
@@ -37,29 +38,24 @@ class builder:
         self.algIndependOne    = algorithm()
         self.algIndependTwo    = algorithm()
 
-        self.algIndependOne.primitive.linear.increase(1, 50)
-        self.algIndependTwo.primitive.linear.increase(1, 50)
-
         self.time = timePack()
-        flagBinEvent: bool = False
-        accumTime: int = 0
         self.dbgTime = 172
 
-        for i in range(0, 50):
+
+
+
+    def buildNormaSequence(self, tacts: int, switchMoment: int):
+        flagBinEvent: bool = False
+        for i in range(0, tacts):
             
-            if i % 4 == 0 and i != 0:
+            if i % switchMoment == 0 and i != 0:
                 flagBinEvent = not flagBinEvent
 
-            self.variance   =  rnd.uniform(0.0, 3.0)
-
-            # self.time.pack['static1']   = int(rnd.uniform(300, 500))
-            # self.time.pack['grow']      = int(rnd.uniform(300, 500))
-            # self.time.pack['static2']   = int(rnd.uniform(300, 500))
-            # self.time.pack['fall']      = int(rnd.uniform(300, 500))
-            # self.time.pack['static3']   = int(rnd.uniform(300, 500))
+            self.variance = rnd.uniform(0.0, 3.0)
 
             #all day seconds = 86400
-             #sum = 2000
+            #sum = 860
+
             self.time.pack['static1']   = self.dbgTime
             self.time.pack['grow']      = self.dbgTime
             self.time.pack['static2']   = self.dbgTime
@@ -78,7 +74,41 @@ class builder:
             self.dynIndependOne(self.time.getSum())
             self.dynIndependTwo()
 
-            accumTime += self.time.getSum()
+        return self
+        
+    def buildBreakSequence(self, tacts: int, switchMoment: int):
+        flagBinEvent: bool = False
+        for i in range(0, tacts):
+            
+            if i % switchMoment == 0 and i != 0:
+                flagBinEvent = not flagBinEvent
+
+            self.variance = rnd.uniform(0.0, 3.0)
+
+            #all seconds in day = 86400
+            #sum seconds in 1 cycle = 860
+            time = constrained_sum_sample_pos(5, 860)
+
+            self.time.pack['static1']   = time[0]
+            self.time.pack['grow']      = time[1]
+            self.time.pack['static2']   = time[2]
+            self.time.pack['fall']      = time[3]
+            self.time.pack['static3']   = time[4]
+
+            self.dynGrowStaticfall(
+                self.time.pack['static1'],
+                self.time.pack['grow'],
+                self.time.pack['static2'],
+                self.time.pack['fall'],
+                self.time.pack['static3']
+            )
+            self.dynLinearEvent(self.time.getSum(), flagBinEvent)
+            self.dynBinEvent(self.time.getSum(), flagBinEvent)
+            self.dynIndependOne(self.time.getSum())
+            self.dynIndependTwo()
+
+        return self        
+
 
     def dynIndependTwo(self):
         self.algIndependTwo.primitive.linear.increase(self.dbgTime, rnd.uniform(0, 100))
@@ -98,13 +128,11 @@ class builder:
             incr = (incr, 100)[incr > 100]
             self.algLinearEvent.primitive.linear.increase(time, incr)
         else:
-            incr = self.algLinearEvent.primitive.parameters.getLastValue() + 20
+            incr = self.algLinearEvent.primitive.parameters.getLastValue() + 33
             incr = (0, incr)[incr > 100]
             self.algLinearEvent.primitive.linear.decrease(time, 100 - incr)
 
     def dynBinEvent(self, time: int, activate: bool = False) -> None:
-        # self.algBinEvent.primitive.static.sequence(time)
-
         if activate:
             self.algBinEvent.primitive.static.true()
             self.algBinEvent.primitive.static.sequence(time)
@@ -139,6 +167,13 @@ class builder:
 
 b = builder()
 
+b = (b.buildNormaSequence(10, 7)
+        .buildBreakSequence(10, 7)
+        .buildNormaSequence(10, 7)
+        .buildBreakSequence(10, 7)
+        .buildNormaSequence(10, 7)
+        )
+
 alg, binEvent, linEvent, algIndependOne, algIndependTwo = b.getSequence()
 
 fig = plt.figure()
@@ -164,5 +199,7 @@ ax_6.plot(binEvent)
 ax_6.plot(linEvent)
 ax_6.plot(algIndependOne)
 ax_6.plot(algIndependTwo)
+
+print(min(linEvent))
 
 plt.show()

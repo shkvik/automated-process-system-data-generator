@@ -38,7 +38,10 @@ class linear:
         step = limit/time 
 
         for index in range(0, time):
-            self.parameters.sequense.append(self.parameters.getLastValue() - step -
+            if self.parameters.getLastValue() < self.parameters.minHeight:
+                self.parameters.sequense.append(self.parameters.minHeight)
+            else:
+                self.parameters.sequense.append(self.parameters.getLastValue() - step -
                 rnd.uniform(self.parameters.varianceMin, self.parameters.varianceMax))
 
         return self
