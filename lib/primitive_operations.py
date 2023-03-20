@@ -8,7 +8,7 @@ from primitive.parameters import parameters
 from primitive.parabola import parabola
 from primitive.linear import linear
 from primitive.static import static
-
+from primitive.sinusoid import sinusoid
 
 class generator:
     def __init__(self) -> None:
@@ -32,6 +32,7 @@ class generator:
         self.parabola = parabola(self.parameters)
         self.linear = linear(self.parameters)
         self.static = static(self.parameters)
+        self.sinusoid = sinusoid(self.parameters)
 
 
 def DrawSignature(start: int, stop: int = None, letter: str = None, color: str = 'red'):
@@ -42,17 +43,15 @@ def DrawSignature(start: int, stop: int = None, letter: str = None, color: str =
 
 gen1 = generator()
 
-gen1.parabola.increase(100, 50)
-gen1.parabola.increase(100, 60)
-gen1.parabola.increase(100, 70)
-gen1.parabola.decrease(100, 20)
-gen1.parabola.decrease(100)
-gen1.parabola.increase(100, 50)
-gen1.linear.increase(100)
-gen1.parabola.decrease(100, 20)
-gen1.linear.decrease(100)
-gen1.static.sequence(100)
-gen1.static.true(100)
+
+gen1.sinusoid.increase(500, 1, 2 * 10)
+gen1.sinusoid.increase(500, 1, 1 * 10)
+gen1.sinusoid.increase(500, 1, 2 * 10)
+gen1.sinusoid.increase(500, 1, 3 * 10)
+gen1.sinusoid.increase(500, 1, 4 * 10)
+gen1.sinusoid.increase(500, 1, 3 * 10)
+gen1.sinusoid.increase(500, 1, 2 * 10)
+gen1.sinusoid.align()
 
 plt.plot(gen1.sequense)
 plt.show()

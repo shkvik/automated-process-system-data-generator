@@ -8,10 +8,7 @@ from processes.utils import constrained_sum_sample_pos
 import matplotlib.pyplot as plt
 import random as rnd
 
-class builderAlgorithm:
-    def __init__(self) -> None:
-        pass
-    
+
 class timePack:
     def __init__(self) -> None:
 
@@ -29,7 +26,8 @@ class timePack:
         return sum(self.pack.values())
 
 
-class builder:
+class сyclicSimpleWork:
+
     def __init__(self) -> None:
 
         self.algGrowFall    = algorithm()
@@ -40,8 +38,6 @@ class builder:
 
         self.time = timePack()
         self.dbgTime = 172
-
-
 
 
     def buildNormaSequence(self, tacts: int, switchMoment: int):
@@ -165,41 +161,96 @@ class builder:
         )
 
 
-b = builder()
 
-b = (b.buildNormaSequence(10, 7)
-        .buildBreakSequence(10, 7)
-        .buildNormaSequence(10, 7)
-        .buildBreakSequence(10, 7)
-        .buildNormaSequence(10, 7)
+class eventProcessingWork():
+    def __init__(self) -> None:
+        self.algRndSinFluct = algorithm()
+        pass
+    
+    def buildNormaSequence(self):
+        self.dynRndSinFluct(1200, 6)
+        self.dynRndSinFluct(500, 5)
+        self.dynRndSinFluct(1200, 6)
+        self.algRndSinFluct.primitive.sinusoid.align()
+        return self
+
+    def dynRndSinFluct(
+            self,
+            time: int = None,
+            fluctuations: int = None
+        ):
+        
+        watchDog: int = 0
+        growDirect: bool = True
+
+        allTime = 1000
+        if fluctuations is None:
+            fluctuations = 10
+
+        period = time / fluctuations
+
+        for index in range(1, fluctuations + 1):
+
+            if index % ((fluctuations/2) + 2) == 0:
+                growDirect = False
+
+            if growDirect:
+                watchDog += 1
+            else:
+                watchDog -= 1
+
+            self.algRndSinFluct.primitive.sinusoid.increase(period, 1, watchDog)
+
+        return self
+
+
+    def getSequence(self):
+        return (
+            self.algRndSinFluct.primitive.getSequence()
         )
 
-alg, binEvent, linEvent, algIndependOne, algIndependTwo = b.getSequence()
 
-fig = plt.figure()
+e = eventProcessingWork()
 
-colum = 6
-raw = 1
+e.buildNormaSequence()
 
-ax_1 = fig.add_subplot(colum, raw, 1)
-ax_2 = fig.add_subplot(colum, raw, 2)
-ax_3 = fig.add_subplot(colum, raw, 3)
-ax_4 = fig.add_subplot(colum, raw, 4)
-ax_5 = fig.add_subplot(colum, raw, 5)
-ax_6 = fig.add_subplot(colum, raw, 6)
-
-ax_1.plot(alg)
-ax_2.plot(binEvent)
-ax_3.plot(linEvent)
-ax_4.plot(algIndependOne)
-ax_5.plot(algIndependTwo)
-
-ax_6.plot(alg)
-ax_6.plot(binEvent)
-ax_6.plot(linEvent)
-ax_6.plot(algIndependOne)
-ax_6.plot(algIndependTwo)
-
-print(min(linEvent))
-
+plt.plot(e.getSequence())
 plt.show()
+# b = сyclicSimpleWork()
+
+# b = (b.buildNormaSequence(10, 7)
+#         .buildBreakSequence(10, 7)
+#         .buildNormaSequence(10, 7)
+#         .buildBreakSequence(10, 7)
+#         .buildNormaSequence(10, 7)
+#         )
+
+# alg, binEvent, linEvent, algIndependOne, algIndependTwo = b.getSequence()
+
+# fig = plt.figure()
+
+# colum = 6
+# raw = 1
+
+# ax_1 = fig.add_subplot(colum, raw, 1)
+# ax_2 = fig.add_subplot(colum, raw, 2)
+# ax_3 = fig.add_subplot(colum, raw, 3)
+# ax_4 = fig.add_subplot(colum, raw, 4)
+# ax_5 = fig.add_subplot(colum, raw, 5)
+# ax_6 = fig.add_subplot(colum, raw, 6)
+
+# ax_1.plot(alg)
+# ax_2.plot(binEvent)
+# ax_3.plot(linEvent)
+# ax_4.plot(algIndependOne)
+# ax_5.plot(algIndependTwo)
+
+# ax_6.plot(alg)
+# ax_6.plot(binEvent)
+# ax_6.plot(linEvent)
+# ax_6.plot(algIndependOne)
+# ax_6.plot(algIndependTwo)
+
+# print(min(linEvent))
+
+# plt.show()
