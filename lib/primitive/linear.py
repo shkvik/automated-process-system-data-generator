@@ -1,6 +1,8 @@
 import random as rnd
+import math
 from multipledispatch import dispatch
 from primitive.parameters import parameters
+from processes.utils import drange
 
 class linear:
 
@@ -23,6 +25,23 @@ class linear:
                 rnd.uniform(self.parameters.varianceMin, self.parameters.varianceMax))
 
         return self
+
+
+    def increaseEventSin(self,
+        time: int,
+        maxHeight: float = None,
+        floatingLength: int = None
+    ):
+        if maxHeight is None:
+            maxHeight = 1
+
+        step = time/180
+
+        for index in range(0, time + 1):
+            self.parameters.sequense.append(math.sin(math.radians(index/step)) * maxHeight)
+
+        return self
+
 
     def decrease(self, time: int, maxHeight: float = None):
 

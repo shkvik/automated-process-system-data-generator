@@ -15,7 +15,7 @@ class unit:
             varianceMin = 0.0,
             maxHeight   = 100.0,
             minHeight   = 0.0,
-            sequense    = [1.0] 
+            sequense    = []
         )
 
         self.parabola = parabola(self.parameters)

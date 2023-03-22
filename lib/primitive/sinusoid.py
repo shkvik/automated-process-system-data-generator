@@ -10,6 +10,12 @@ class sinusoid:
         self.parameters = parameters
         self.tempSin: list[float] = []
 
+    def getLastIndex(self) -> int:
+        return len(self.tempSin) - 1
+    
+    def getLastValue(self) -> float:
+        return self.tempSin[self.getLastIndex()]
+
     def increase(
             self,
             time: int,
@@ -32,8 +38,11 @@ class sinusoid:
         y = np.sin(2 * np.pi * frequency * x / time)
         y = y * amplitude
 
-        a = y.tolist()
-        self.tempSin.extend(a)
+        if self.parameters.varianceMax != 0 or self.parameters.varianceMin != 0:
+            y = [value + rnd.uniform(self.parameters.varianceMin,
+                    self.parameters.varianceMax) for value in y]
+
+        self.tempSin.extend(y)
         
         return self
     

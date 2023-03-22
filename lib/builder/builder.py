@@ -162,15 +162,19 @@ class сyclicSimpleWork:
 
 
 
-class eventProcessingWork():
+class eventSinProcessingWork():
     def __init__(self) -> None:
         self.algRndSinFluct = algorithm()
+        self.eventOne = algorithm()
+        # self.eventOne.primitive.parabola.increase(500)
+        # self.eventOne.primitive.parabola.decrease(500)
         pass
     
     def buildNormaSequence(self):
-        self.dynRndSinFluct(1200, 6)
-        self.dynRndSinFluct(500, 5)
-        self.dynRndSinFluct(1200, 6)
+        for i in range(0, 5):
+            self.dynRndSinFluct(1000, int(rnd.uniform(1, 20)))
+            self.dynEventOne(1000, 1)
+
         self.algRndSinFluct.primitive.sinusoid.align()
         return self
 
@@ -190,7 +194,7 @@ class eventProcessingWork():
         period = time / fluctuations
 
         for index in range(1, fluctuations + 1):
-
+            self.algRndSinFluct.primitive.setVariance(-2, 2)
             if index % ((fluctuations/2) + 2) == 0:
                 growDirect = False
 
@@ -203,18 +207,65 @@ class eventProcessingWork():
 
         return self
 
+    def dynEventOne(self, time: int, value: int):
+        if self.algRndSinFluct.primitive.sinusoid.getLastValue() > value:
+            self.eventOne.primitive.parabola.increase(int(time/2))
+            self.eventOne.primitive.parabola.decrease(int(time/2))
+        else:
+            self.eventOne.primitive.static.sequence(time)
 
     def getSequence(self):
         return (
-            self.algRndSinFluct.primitive.getSequence()
+            self.algRndSinFluct.primitive.getSequence(),
+            self.eventOne.primitive.getSequence()
         )
 
+class eventProcessingWork():
+
+    def __init__(self) -> None:
+        self.algRndLin = algorithm()
+        self.eventOne = algorithm()
+
+    def buildNormaSequence(self):
+        self.dynRndLin()
+
+    def dynRndLin(self):
+        for index in range(0, 5):
+            self.algRndLin.primitive.setVariance(-0.5,0.5)
+            self.algRndLin.primitive.linear.increase(1000, rnd.uniform(0, 100))
+            self.dynEventOne(1000, 80)
+        pass
+    
+    def dynEventOne(self, time: int, value: int):
+        
+        if self.algRndLin.primitive.parameters.getLastValue() > value:
+            self.eventOne.primitive.parabola.increase(int(time/2))
+            self.eventOne.primitive.parabola.decrease(int(time/2))
+        else:
+            self.eventOne.primitive.static.sequence(time)
+
+    def getSequence(self):
+        return (
+            self.algRndLin.primitive.getSequence(),
+            self.eventOne.primitive.getSequence()
+        )
 
 e = eventProcessingWork()
 
 e.buildNormaSequence()
 
-plt.plot(e.getSequence())
+algRndSinFluct, eventOne = e.getSequence()
+
+test = algorithm()
+test.primitive.linear.increaseEventSin(100, 2)
+test.primitive.static.sequence(100)
+test.primitive.linear.increaseEventSin(100, 4)
+test.primitive.static.sequence(100)
+test.primitive.linear.increaseEventSin(100, 10)
+# plt.plot(algRndSinFluct)
+# plt.plot(eventOne)
+
+plt.plot(test.primitive.getSequence()[1:])
 plt.show()
 # b = сyclicSimpleWork()
 

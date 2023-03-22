@@ -5,7 +5,7 @@ class parameters:
         varianceMin:    float,
         maxHeight:      float,
         minHeight:      float,
-        sequense:       list[float]
+        sequense:       list[float] = []
         ) -> None:
                  
         #range of random numbers
@@ -19,7 +19,7 @@ class parameters:
         self.sequense = sequense
     
     def getLastIndex(self) -> int:
-        return len(self.sequense) - 1
-    
+        return len(self.sequense) - 1 if len(self.sequense) != 0 else 0
+
     def getLastValue(self) -> float:
-        return self.sequense[self.getLastIndex()]
+        return self.sequense[self.getLastIndex()] if len(self.sequense) != 0 else 0
