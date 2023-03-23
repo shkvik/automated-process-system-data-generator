@@ -1,9 +1,15 @@
 import random as rnd
 import math
+import pandas as pd 
+import numpy as np
+
 
 # from primitive.parameters import parameters
 from parameters import parameters
 import matplotlib.pyplot as plt
+import pandas as pd 
+import seaborn as sns
+
 
 def get_all_divisors_brute(n):
     for i in range(1, int(n / 2) + 1):
@@ -125,14 +131,15 @@ class event:
         deleters: list[int] = []
         for i in range(0, len(res) - 1):
             if res[i] >= 100 and res[i] % 2 == 0:
-                deleters.append(res[i])
+                if (allSecondsInDay / res[i]) % 2 == 0:
+                    deleters.append(res[i])
 
-        time    = int(deleters[rnd.randint(0, len(deleters) - 1)])
-        tacts   = int((allSecondsInDay / time)/2)
+        self.time    = int(deleters[rnd.randint(0, len(deleters) - 1)])
+        self.tacts   = int((allSecondsInDay / self.time)/2)
 
-        for i in range(0, tacts):
-            self.rndProcess(time, rnd.uniform(self.parametersPrcss.getLastValue(), 100))
-            self.decreasePrc(time, rnd.uniform(self.parametersPrcss.getLastValue(), 100))
+        for i in range(0, self.tacts):
+            self.rndProcess(self.time, rnd.uniform(self.parametersPrcss.getLastValue(), 100))
+            self.decreasePrc(self.time, rnd.uniform(self.parametersPrcss.getLastValue(), 100))
 
     def getSequenceEvent(self):
         return self.parametersEvent.sequense
@@ -140,31 +147,106 @@ class event:
     def getSequencePrcss(self):
         return self.parametersPrcss.sequense
 
-e = []
-for i in range(0, 3):
-    e.append(event())
-    e[i].buildRndSeqs()
 
-fig = plt.figure()
-
-colum = 6
-raw = 1
-
-ax_1 = fig.add_subplot(colum, raw, 1)
-ax_2 = fig.add_subplot(colum, raw, 2)
-ax_3 = fig.add_subplot(colum, raw, 3)
-ax_4 = fig.add_subplot(colum, raw, 4)
-ax_5 = fig.add_subplot(colum, raw, 5)
-ax_6 = fig.add_subplot(colum, raw, 6)
-
-ax_1.plot(e[0].getSequenceEvent())
-ax_2.plot(e[0].getSequencePrcss())
-
-ax_3.plot(e[1].getSequenceEvent())
-ax_4.plot(e[1].getSequencePrcss())
-
-ax_5.plot(e[2].getSequenceEvent())
-ax_6.plot(e[2].getSequencePrcss())
+def compression(listNode: list[float]):
+    listNode = listNode[0:80000:100]
+    return listNode
 
 
-plt.show()
+
+def prepareDataPd():
+    colum = 10
+
+    sequences = []
+    for i in range(0, colum):
+        tmp = event()
+        tmp.buildRndSeqs()
+        sequences.append(compression(tmp.getSequenceEvent()))
+        sequences.append(compression(tmp.getSequencePrcss()))
+
+    res = alignDicts(sequences)
+
+    return pd.DataFrame(res)
+
+
+def prepareDataNpArray():
+    colum = 10
+
+    sequences = []
+    for i in range(0, colum):
+        tmp = event()
+        tmp.buildRndSeqs()
+        sequences.append(compression(tmp.getSequenceEvent()))
+        sequences.append(compression(tmp.getSequencePrcss()))
+
+    res = alignToNpArray(sequences)
+
+    return res
+
+
+
+def alignDicts(nodeList: list[list[float]] = []):
+    tmp: list[int] = []
+    result = {}
+
+    for i in range(0, len(nodeList)):
+        tmp.append(len(nodeList[i]))
+
+    tmp.sort()
+
+    for i in range(0, len(nodeList)):
+        nodeList[i] = nodeList[i][:tmp[0]]
+        result['node' + str(i)] = nodeList[i]
+        print('node[' + str(i) + ']: ' + str(len(nodeList[i])))
+
+    return result
+
+
+def alignToNpArray(nodeList: list[list[float]] = []):
+    tmp: list[int] = []
+    result = []
+
+    for i in range(0, len(nodeList)):
+        tmp.append(len(nodeList[i]))
+
+    tmp.sort()
+
+    for i in range(0, len(nodeList)):
+        nodeList[i] = nodeList[i][:tmp[0]]
+        result.append(np.array(nodeList[i]))
+        print('np array [' + str(i) + ']: ' + str(len(nodeList[i])))
+
+    return result
+
+
+# colum = 10
+
+# sequences = []
+# for i in range(0, colum):
+#     tmp = event()
+#     tmp.buildRndSeqs()
+#     sequences.append(compression(tmp.getSequenceEvent()))
+#     sequences.append(compression(tmp.getSequencePrcss()))
+
+
+# fig = plt.figure()
+
+
+# raw = 1
+
+# axs = []
+# for i in range(0, colum):
+#     axs.append(fig.add_subplot(colum, raw, i + 1))
+#     axs[i].plot(compression(sequences[i]))
+
+
+
+
+# res = alignLists(sequences)
+
+# df = pd.DataFrame(res)
+
+# df.to_csv('GFG.csv') 
+
+
+#plt.show()

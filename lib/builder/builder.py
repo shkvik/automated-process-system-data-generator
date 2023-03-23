@@ -250,58 +250,60 @@ class eventProcessingWork():
             self.eventOne.primitive.getSequence()
         )
 
-e = eventProcessingWork()
 
-e.buildNormaSequence()
+b = сyclicSimpleWork()
 
-algRndSinFluct, eventOne = e.getSequence()
+b = (
+    b.buildNormaSequence(10, 7)
+     .buildBreakSequence(10, 7)
+     .buildNormaSequence(10, 7)
+     .buildBreakSequence(10, 7)
+     .buildNormaSequence(10, 7)
+     .buildBreakSequence(10, 7)
+     .buildNormaSequence(10, 7)
+     .buildBreakSequence(10, 7)
+     .buildNormaSequence(10, 7)
+     .buildNormaSequence(10, 7)
+)
 
-test = algorithm()
-test.primitive.linear.increaseEventSin(100, 2)
-test.primitive.static.sequence(100)
-test.primitive.linear.increaseEventSin(100, 4)
-test.primitive.static.sequence(100)
-test.primitive.linear.increaseEventSin(100, 10)
-# plt.plot(algRndSinFluct)
-# plt.plot(eventOne)
+alg, binEvent, linEvent, algIndependOne, algIndependTwo = b.getSequence()
 
-plt.plot(test.primitive.getSequence()[1:])
+
+def compression(listNode: list[float]):
+    listNode = listNode[0:len(listNode):100]
+    return listNode
+
+alg = compression(alg)
+binEvent = compression(binEvent)
+linEvent = compression(linEvent)
+algIndependOne = compression(algIndependOne)
+algIndependTwo = compression(algIndependTwo)
+
+
+fig = plt.figure()
+
+colum = 6
+raw = 1
+
+ax_1 = fig.add_subplot(colum, raw, 1)
+ax_2 = fig.add_subplot(colum, raw, 2)
+ax_3 = fig.add_subplot(colum, raw, 3)
+ax_4 = fig.add_subplot(colum, raw, 4)
+ax_5 = fig.add_subplot(colum, raw, 5)
+ax_6 = fig.add_subplot(colum, raw, 6)
+
+ax_1.plot(alg)
+ax_2.plot(binEvent)
+ax_3.plot(linEvent)
+ax_4.plot(algIndependOne)
+ax_5.plot(algIndependTwo)
+
+ax_6.plot(alg)
+ax_6.plot(binEvent)
+ax_6.plot(linEvent)
+ax_6.plot(algIndependOne)
+ax_6.plot(algIndependTwo)
+
+print(min(linEvent))
+
 plt.show()
-# b = сyclicSimpleWork()
-
-# b = (b.buildNormaSequence(10, 7)
-#         .buildBreakSequence(10, 7)
-#         .buildNormaSequence(10, 7)
-#         .buildBreakSequence(10, 7)
-#         .buildNormaSequence(10, 7)
-#         )
-
-# alg, binEvent, linEvent, algIndependOne, algIndependTwo = b.getSequence()
-
-# fig = plt.figure()
-
-# colum = 6
-# raw = 1
-
-# ax_1 = fig.add_subplot(colum, raw, 1)
-# ax_2 = fig.add_subplot(colum, raw, 2)
-# ax_3 = fig.add_subplot(colum, raw, 3)
-# ax_4 = fig.add_subplot(colum, raw, 4)
-# ax_5 = fig.add_subplot(colum, raw, 5)
-# ax_6 = fig.add_subplot(colum, raw, 6)
-
-# ax_1.plot(alg)
-# ax_2.plot(binEvent)
-# ax_3.plot(linEvent)
-# ax_4.plot(algIndependOne)
-# ax_5.plot(algIndependTwo)
-
-# ax_6.plot(alg)
-# ax_6.plot(binEvent)
-# ax_6.plot(linEvent)
-# ax_6.plot(algIndependOne)
-# ax_6.plot(algIndependTwo)
-
-# print(min(linEvent))
-
-# plt.show()
