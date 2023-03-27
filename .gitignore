@@ -1,3 +1,6 @@
 **/__pycache__/
+**/variables
+**/models
 /.vscode
 /logs
+/dataset

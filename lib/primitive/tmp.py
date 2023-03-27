@@ -8,11 +8,11 @@ from keras.layers import Dense
 from keras.layers import RepeatVector
 from keras.layers import TimeDistributed
 
-from event import event, prepareDataNpArray
+# from event import event, prepareDataNpArray
 
 
-df = prepareDataNpArray()
-df = np.array(df)
+# df = prepareDataNpArray()
+# df = np.array(df)
 
 # split a multivariate sequence into samples
 def split_sequences(sequences, n_steps_in, n_steps_out):
@@ -65,17 +65,17 @@ model.add(TimeDistributed(Dense(n_features)))
 model.compile(optimizer='adam', loss='mse')
 
 # fit model
-model.fit(X, y, epochs=300, verbose=0)
+model.fit(X, y, epochs=100, verbose=1)
 
 
 # demonstrate prediction
 x_input = array([
-	[60, 65, 125],
+	[60, 65, 500],
     [70, 75, 145], 
     [80, 85, 165]
 ])
 
 x_input = x_input.reshape((1, n_steps_in, n_features))
 
-yhat = model.predict(x_input, verbose=0)
-print(yhat)
+predictions = model.predict(x_input, verbose=2)
+mse = np.mean(np.power(predictions - 

@@ -137,7 +137,7 @@ class event:
         self.time    = int(deleters[rnd.randint(0, len(deleters) - 1)])
         self.tacts   = int((allSecondsInDay / self.time)/2)
 
-        for i in range(0, self.tacts):
+        for i in range(0, (self.tacts * 2)):
             self.rndProcess(self.time, rnd.uniform(self.parametersPrcss.getLastValue(), 100))
             self.decreasePrc(self.time, rnd.uniform(self.parametersPrcss.getLastValue(), 100))
 
@@ -149,24 +149,73 @@ class event:
 
 
 def compression(listNode: list[float]):
-    listNode = listNode[0:80000:100]
+    listNode = listNode[0:172800:108]
     return listNode
 
 
+def getDataSetX(listNode: list[float]):
+    return listNode[0:800]
 
-def prepareDataPd():
-    colum = 10
+def getDataSetY(listNode: list[float]):
+    return listNode[800:1600]
 
-    sequences = []
-    for i in range(0, colum):
-        tmp = event()
-        tmp.buildRndSeqs()
-        sequences.append(compression(tmp.getSequenceEvent()))
-        sequences.append(compression(tmp.getSequencePrcss()))
 
-    res = alignDicts(sequences)
+def prepareDataPd(count: int, index: int = 0):
 
-    return pd.DataFrame(res)
+    sequencesTrainX = []
+    sequencesTrainY = []
+
+    sequencesValX = []
+    sequencesValY = []
+
+    for i in range(0, count):
+        
+        _event = event()
+        _eventVal   = event()
+
+        _event.buildRndSeqs()
+        _eventVal.buildRndSeqs()
+
+        trainEventX = getDataSetX(compression(_event.getSequenceEvent()))
+        trainPrcssX = getDataSetX(compression(_event.getSequencePrcss()))
+
+        trainEventY = getDataSetY(compression(_event.getSequenceEvent()))
+        trainPrcssY = getDataSetY(compression(_event.getSequencePrcss()))
+
+        sequencesTrainX.append(trainEventX)
+        sequencesTrainX.append(trainPrcssX)
+
+        sequencesTrainY.append(trainEventY)
+        sequencesTrainY.append(trainPrcssY)
+
+
+
+        valEventX = getDataSetX(compression(_eventVal.getSequenceEvent()))
+        valPrcssX = getDataSetX(compression(_eventVal.getSequencePrcss()))
+        
+        valEventY = getDataSetY(compression(_eventVal.getSequenceEvent()))
+        valPrcssY = getDataSetY(compression(_eventVal.getSequencePrcss()))
+
+        sequencesValX.append(valEventX)
+        sequencesValX.append(valPrcssX)
+
+        sequencesValY.append(valEventY)
+        sequencesValY.append(valPrcssY)
+
+
+    resTrainX = pd.DataFrame(alignDicts(sequencesTrainX))
+    resTrainY = pd.DataFrame(alignDicts(sequencesTrainY))
+    
+    resValX = pd.DataFrame(alignDicts(sequencesValX))
+    resValY = pd.DataFrame(alignDicts(sequencesValY))
+
+    resTrainX.to_csv('./dataset/train/trainX/trainX_{index}.csv'.format(index=index), index=False)
+    resTrainY.to_csv('./dataset/train/trainY/trainY_{index}.csv'.format(index=index), index=False)
+
+    resValX.to_csv('./dataset/val/valX/valX_{index}.csv'.format(index=index), index=False) 
+    resValY.to_csv('./dataset/val/valY/valY_{index}.csv'.format(index=index), index=False)
+
+    return pd.DataFrame(resTrainX), pd.DataFrame(resTrainY)
 
 
 def prepareDataNpArray():
@@ -174,6 +223,7 @@ def prepareDataNpArray():
 
     sequences = []
     for i in range(0, colum):
+
         tmp = event()
         tmp.buildRndSeqs()
         sequences.append(compression(tmp.getSequenceEvent()))
@@ -196,8 +246,8 @@ def alignDicts(nodeList: list[list[float]] = []):
 
     for i in range(0, len(nodeList)):
         nodeList[i] = nodeList[i][:tmp[0]]
-        result['node' + str(i)] = nodeList[i]
-        print('node[' + str(i) + ']: ' + str(len(nodeList[i])))
+        result['node' + str(i + 1)] = nodeList[i]
+        #print('node[' + str(i + 1) + ']: ' + str(len(nodeList[i])))
 
     return result
 
@@ -211,13 +261,17 @@ def alignToNpArray(nodeList: list[list[float]] = []):
 
     tmp.sort()
 
-    for i in range(0, len(nodeList)):
+    for i in range(1, len(nodeList)):
         nodeList[i] = nodeList[i][:tmp[0]]
         result.append(np.array(nodeList[i]))
         print('np array [' + str(i) + ']: ' + str(len(nodeList[i])))
 
     return result
 
+
+for i in range(0, 100):
+    prepareDataPd(12, i)
+    print('осталось {val}'.format(val=(100-i)))
 
 # colum = 10
 
@@ -230,23 +284,20 @@ def alignToNpArray(nodeList: list[list[float]] = []):
 
 
 # fig = plt.figure()
-
-
 # raw = 1
 
 # axs = []
 # for i in range(0, colum):
 #     axs.append(fig.add_subplot(colum, raw, i + 1))
-#     axs[i].plot(compression(sequences[i]))
+#     axs[i].plot(sequences[i])
 
 
+data1 = pd.read_csv("./dataset/train/trainX/trainX_5.csv", delimiter=",")
+data2 = pd.read_csv("./dataset/train/trainX/trainX_0.csv", delimiter=",")
+data3 = pd.read_csv("./dataset/train/trainY/trainY_0.csv", delimiter=",")
 
 
-# res = alignLists(sequences)
+plt.plot(data1['node1'])
+plt.plot(data1['node2'])
 
-# df = pd.DataFrame(res)
-
-# df.to_csv('GFG.csv') 
-
-
-#plt.show()
+plt.show()
